@@ -1,0 +1,70 @@
+#!/usr/bin/env bash
+
+# Use git-sh-setup, similar to git-rebase
+# https://www.kernel.org/pub/software/scm/git/docs/git-sh-setup.html
+# https://github.com/git/git/blob/master/git-rebase.sh
+# shellcheck disable=SC2034
+
+project_path=$(cd `dirname $0`; pwd)
+# project_name="${project_path##*/}"
+# echo $project_name
+# echo "父脚本：启动子脚本.."
+# ./async-file &
+
+# pid=$!
+
+# echo "父脚本：子脚本(PID=${pid})已启动"
+
+# echo "父脚本：继续执行中.."
+
+
+# echo "父脚本：暂停执行，等待子脚本执行完毕.."
+# wait ${pid}
+# echo $project_name
+
+# ./test
+
+# echo $BAR
+project_name=`cat package.json | awk -F '[:,}"]' '{for(i=1;i<=NF;i++){if($i == "name") print $(i+3)}}'`       
+# project_name=`grep name package.json`
+echo $project_name;
+demain="https://www.npmjs.com/package"
+openurl="$demain/$project_name"
+# echo "${openurl}"
+if (( is_commit )); then
+    sha=$(git rev-parse HEAD)
+    openurl="$openurl/commit/$sha"
+elif [[ $remote_ref != "master" ]]; then
+    # simplify URL for master
+    openurl="$openurl$providerBranchRef"
+fi
+
+if [ "$suffix" ]; then
+    openurl="$openurl/$suffix"
+fi
+
+# get current open browser command
+case $( uname -s ) in
+  Darwin)   open='open';;
+  MINGW*)   open='start';;
+  MSYS*)    open='start';;
+  CYGWIN*)  open='cygstart';;
+  *)        # Try to detect WSL (Windows Subsystem for Linux)
+            if uname -r | grep -q -i Microsoft; then
+              open='powershell.exe Start'
+            else
+              open='xdg-open'
+            fi;;
+esac
+
+if (( print_only )); then
+  BROWSER="echo"
+fi
+
+# Allow printing the url if BROWSER=echo
+if [[ $BROWSER != "echo" ]]; then
+  exec &>/dev/null
+fi
+
+# open it in a browser
+${BROWSER:-$open} "$openurl"

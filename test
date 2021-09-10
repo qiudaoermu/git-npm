@@ -1,0 +1,4 @@
+# 根据key获取value（适用于key=value格式的数据）
+# 调用格式 info key <file>
+#!/bin/bash
+export BAR=2
