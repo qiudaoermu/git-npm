@@ -1,11 +1,16 @@
 {
-  "name": "n-open",
-  "version": "1.0.1",
+  "name": "git-npm",
+  "version": "1.0.0",
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "register": "npm publish",
+    "prepare": "npm run build && npm --no-git-tag-version version patch"
   },
+  "pre-commit": [
+    "register"
+  ],
   "bin": {
     "git-npm": "git-npm",
     "npm-home": "git-npm"
